@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пожарно-технический минимум — 80 вопросов</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;color:#e0e0e0;display:flex;justify-content:center;align-items:center;padding:20px}
+  .container{background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:20px;max-width:800px;width:100%;padding:40px;box-shadow:0 25px 50px rgba(0,0,0,0.4)}
+  h1{text-align:center;font-size:28px;margin-bottom:8px;color:#fff;font-weight:600}
+  h2{text-align:center;font-size:16px;color:#a0aec0;margin-bottom:30px;font-weight:400}
+  .screen{display:none}
+  .screen.active{display:block}
+  .login-form{margin-top:20px}
+  .form-group{margin-bottom:24px}
+  .form-group label{display:block;margin-bottom:8px;font-size:15px;color:#cbd5e0;font-weight:500}
+  .form-group input{width:100%;padding:14px 18px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;background:rgba(0,0,0,0.25);color:#fff;font-size:16px;outline:none;transition:all 0.3s}
+  .form-group input:focus{border-color:#4fd1c5;box-shadow:0 0 0 3px rgba(79,209,197,0.15)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 32px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,#4fd1c5,#319795);color:#fff;width:100%}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(79,209,197,0.35)}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn-secondary{background:rgba(255,255,255,0.1);color:#e0e0e0;border:1px solid rgba(255,255,255,0.15)}
+  .btn-secondary:hover{background:rgba(255,255,255,0.18)}
+  .lang-switch{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+  .lang-btn{padding:6px 18px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#a0aec0;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+  .lang-btn.active{background:linear-gradient(135deg,#4fd1c5,#319795);color:#fff;border-color:transparent}
+  .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin-bottom:24px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#4fd1c5,#319795);border-radius:3px;transition:width 0.4s ease}
+  .question-counter{text-align:center;font-size:14px;color:#a0aec0;margin-bottom:20px}
+  .question-text{font-size:18px;line-height:1.6;color:#fff;margin-bottom:28px;padding:20px;background:rgba(0,0,0,0.2);border-radius:14px;border-left:4px solid #4fd1c5}
+  .answers{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+  .answer-option{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);border-radius:14px;cursor:pointer;transition:all 0.25s;text-align:left;width:100%;color:#e0e0e0;font-size:16px;line-height:1.5;font-family:inherit}
+  .answer-option:hover{background:rgba(255,255,255,0.1);border-color:rgba(79,209,197,0.4);transform:translateX(4px)}
+  .answer-option.selected{background:rgba(79,209,197,0.12);border-color:#4fd1c5;color:#fff}
+  .answer-option.correct{background:rgba(72,187,120,0.18);border-color:#48bb78;color:#fff}
+  .answer-option.correct .answer-letter{background:#48bb78;color:#1a1a2e}
+  .answer-option.correct span:last-child{font-weight:700}
+  .answer-option.wrong{background:rgba(252,129,129,0.18);border-color:#fc8181;color:#fff}
+  .answer-option.wrong .answer-letter{background:#fc8181;color:#1a1a2e}
+  .answer-option.disabled{cursor:default;opacity:0.7}
+  .answer-option.disabled:hover{transform:none;border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.05)}
+  .answer-letter{flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:10px;font-weight:700;font-size:15px;color:#fff;transition:all 0.25s}
+  .answer-option.selected .answer-letter{background:#4fd1c5;color:#1a1a2e}
+  .nav-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .nav-buttons .btn{flex:1;min-width:140px;max-width:300px}
+  .result-card{text-align:center;padding:30px;background:rgba(0,0,0,0.2);border-radius:16px;margin-bottom:24px}
+  .score-circle{width:160px;height:160px;border-radius:50%;margin:0 auto 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid;transition:all 0.5s}
+  .score-circle.pass{border-color:#48bb78;background:rgba(72,187,120,0.1)}
+  .score-circle.fail{border-color:#fc8181;background:rgba(252,129,129,0.1)}
+  .score-number{font-size:42px;font-weight:700;line-height:1}
+  .score-circle.pass .score-number{color:#48bb78}
+  .score-circle.fail .score-number{color:#fc8181}
+  .score-label{font-size:14px;color:#a0aec0;margin-top:6px}
+  .result-status{font-size:22px;font-weight:600;margin-bottom:8px}
+  .result-status.pass{color:#48bb78}
+  .result-status.fail{color:#fc8181}
+  .result-detail{color:#a0aec0;font-size:15px;margin-bottom:24px}
+  .history-table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+  .history-table th,.history-table td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .history-table th{color:#a0aec0;font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+  .history-table td{color:#e0e0e0}
+  .history-table tr:hover td{background:rgba(255,255,255,0.03)}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+  .badge-pass{background:rgba(72,187,120,0.15);color:#48bb78}
+  .badge-fail{background:rgba(252,129,129,0.15);color:#fc8181}
+  .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+  .btn-row .btn{flex:1;min-width:180px}
+  .info-box{background:rgba(79,209,197,0.08);border:1px solid rgba(79,209,197,0.2);border-radius:12px;padding:16px;margin-top:16px;font-size:14px;color:#a0aec0;line-height:1.6}
+  .info-box strong{color:#4fd1c5}
+  .error-msg{color:#fc8181;font-size:14px;margin-top:8px;min-height:20px}
+  @media(max-width:600px){
+    .container{padding:24px}
+    h1{font-size:22px}
+    .question-text{font-size:16px;padding:14px}
+    .answer-option{padding:12px 14px;font-size:15px}
+    .nav-buttons .btn{min-width:100px;font-size:14px;padding:12px 16px}
+    .score-circle{width:130px;height:130px}
+    .score-number{font-size:34px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="screen-login" class="screen active">
+    <h1 data-i18n="title"></h1>
+    <h2 data-i18n="subtitle"></h2>
+    <div class="login-form">
+      <div class="form-group">
+        <label for="fio" data-i18n="fioLabel"></label>
+        <input type="text" id="fio" autocomplete="name">
+      </div>
+      <button class="btn btn-primary" onclick="startTest()" data-i18n="startBtn"></button>
+    </div>
+    <div style="margin-top:30px;text-align:center">
+      <button class="btn btn-secondary" onclick="showPasswordPrompt()" data-i18n="journalBtn"></button>
+    </div>
+  </div>
+
+  <div id="screen-test" class="screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="question-counter" id="question-counter"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="answers" id="answers"></div>
+    <div class="nav-buttons">
+      <button class="btn btn-primary" id="btn-confirm" onclick="confirmAnswer()" disabled data-i18n="confirmBtn"></button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" disabled style="display:none"></button>
+    </div>
+  </div>
+
+  <div id="screen-results" class="screen">
+    <h1 data-i18n="resultsTitle"></h1>
+    <div class="result-card">
+      <div class="score-circle" id="score-circle">
+        <div class="score-number" id="score-number">0</div>
+        <div class="score-label" data-i18n="scoreLabel"></div>
+      </div>
+      <div class="result-status" id="result-status"></div>
+      <div class="result-detail" id="result-detail"></div>
+    </div>
+    <div class="info-box" data-i18n="infoBox"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="restartTest()" data-i18n="restartBtn"></button>
+      <button class="btn btn-secondary" onclick="showPasswordPrompt()" data-i18n="journalBtn2"></button>
+    </div>
+  </div>
+
+  <div id="screen-password" class="screen">
+    <h1 data-i18n="journalTitle"></h1>
+    <h2 data-i18n="journalSubtitle"></h2>
+    <div class="login-form">
+      <div class="form-group">
+        <label for="password" data-i18n="passwordLabel"></label>
+        <input type="password" id="password">
+        <div class="error-msg" id="password-error"></div>
+      </div>
+      <button class="btn btn-primary" onclick="checkPassword()" data-i18n="loginBtn"></button>
+    </div>
+    <div style="margin-top:20px;text-align:center">
+      <button class="btn btn-secondary" onclick="goToLogin()" data-i18n="backBtn"></button>
+    </div>
+  </div>
+
+  <div id="screen-history" class="screen">
+    <h1 data-i18n="journalTitle2"></h1>
+    <h2 data-i18n="journalSubtitle2"></h2>
+    <div id="history-content"></div>
+    <div class="btn-row" style="margin-top:24px">
+      <button class="btn btn-primary" onclick="downloadResults()" data-i18n="downloadAllBtn"></button>
+      <button class="btn btn-secondary" onclick="goToLogin()" data-i18n="homeBtn"></button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ALL_QUESTIONS=[{"id": 1, "question": "Что такое пожарно-технический минимум (ПТМ)?", "answers": [{"letter": "А", "text": "Перечень противопожарного оборудования предприятия"}, {"letter": "Б", "text": "План эвакуации людей при пожаре"}, {"letter": "В", "text": "Инструкция по эксплуатации огнетушителей"}, {"letter": "Г", "text": "Обязательный минимум знаний по пожарной безопасности у работников организаций"}], "correct": "Г"}, {"id": 2, "question": "Каким приказом министра МЧС утверждены Правила обучения работников и населения мерам пожарной безопасности?", "answers": [{"letter": "А", "text": "№ 55 от 21 февраля 2022 года"}, {"letter": "Б", "text": "№ 405 от 17 августа 2021 года"}, {"letter": "В", "text": "№ 276 от 9 июня 2014 года"}, {"letter": "Г", "text": "№ 494 от 24 декабря 2024 года"}], "correct": "В"}, {"id": 3, "question": "В какой срок после приема на работу проводится обучение ПТМ работников организаций?", "answers": [{"letter": "А", "text": "В течение трех месяцев"}, {"letter": "Б", "text": "В течение месяца"}, {"letter": "В", "text": "В течение шести месяцев"}, {"letter": "Г", "text": "В течение года"}], "correct": "Б"}, {"id": 4, "question": "С какой периодичностью проводится обучение ПТМ работников обычных организаций?", "answers": [{"letter": "А", "text": "Ежегодно"}, {"letter": "Б", "text": "Раз в пять лет"}, {"letter": "В", "text": "Не реже одного раза в три года"}, {"letter": "Г", "text": "Раз в полгода"}], "correct": "В"}, {"id": 5, "question": "С какой периодичностью проходят обучение ПТМ работники, связанные со взрывопожароопасным производством?", "answers": [{"letter": "А", "text": "Один раз в три года"}, {"letter": "Б", "text": "Один раз в два года"}, {"letter": "В", "text": "Один раз в пять лет"}, {"letter": "Г", "text": "Один раз в год"}], "correct": "Г"}, {"id": 6, "question": "Кто обязан проходить обучение ПТМ в учебных центрах с отрывом от производства?", "answers": [{"letter": "А", "text": "Только вновь принятые работники"}, {"letter": "Б", "text": "Руководители и лица, ответственные за пожарную безопасность"}, {"letter": "В", "text": "Только работники бухгалтерии"}, {"letter": "Г", "text": "Только водители транспортных средств"}], "correct": "Б"}, {"id": 7, "question": "Каким приказом утверждены Правила пожарной безопасности в РК?", "answers": [{"letter": "А", "text": "Приказ МЧС РК № 276 от 09.06.2014"}, {"letter": "Б", "text": "Приказ МЧС РК № 55 от 21.02.2022"}, {"letter": "В", "text": "Приказ МЧС РК № 405 от 17.08.2021"}, {"letter": "Г", "text": "Приказ МЧС РК № 494 от 24.12.2024"}], "correct": "Б"}, {"id": 8, "question": "Как определяется пожар?", "answers": [{"letter": "А", "text": "Любое контролируемое горение в печи"}, {"letter": "Б", "text": "Горение, возникшее только от молнии"}, {"letter": "В", "text": "Горение, происходящее только на открытом воздухе"}, {"letter": "Г", "text": "Неконтролируемое горение, создающее угрозу жизни и здоровью людей и причиняющее материальный ущерб"}], "correct": "Г"}, {"id": 9, "question": "Что такое пожарная безопасность?", "answers": [{"letter": "А", "text": "Совокупность огнетушителей на объекте"}, {"letter": "Б", "text": "Обязанность пожарной службы тушить пожары"}, {"letter": "В", "text": "Перечень штрафов за нарушения"}, {"letter": "Г", "text": "Состояние защищенности людей, имущества, общества и государства от пожаров"}], "correct": "Г"}, {"id": 10, "question": "На кого пунктом 3 ППБ возложена ответственность за обеспечение пожарной безопасности на объекте?", "answers": [{"letter": "А", "text": "Только на сотрудников пожарной службы"}, {"letter": "Б", "text": "На собственников и руководителей организаций"}, {"letter": "В", "text": "Только на работников охраны"}, {"letter": "Г", "text": "Только на посетителей объекта"}], "correct": "Б"}, {"id": 11, "question": "Как руководитель организации может назначить лиц, ответственных за ПБ на отдельных участках работ?", "answers": [{"letter": "А", "text": "Устным распоряжением"}, {"letter": "Б", "text": "Своим приказом"}, {"letter": "В", "text": "По решению профсоюза"}, {"letter": "Г", "text": "Назначение не допускается"}], "correct": "Б"}, {"id": 12, "question": "На какие объекты Правила пожарной безопасности (приказ № 55) не распространяются?", "answers": [{"letter": "А", "text": "Складские объекты"}, {"letter": "Б", "text": "Объекты гражданской авиации, леса и энергетические объекты"}, {"letter": "В", "text": "Административные здания"}, {"letter": "Г", "text": "Объекты торговли"}], "correct": "Б"}, {"id": 13, "question": "Какова максимальная продолжительность проверки субъектов предпринимательства без продления?", "answers": [{"letter": "А", "text": "30 календарных дней"}, {"letter": "Б", "text": "10 календарных дней"}, {"letter": "В", "text": "15 календарных дней"}, {"letter": "Г", "text": "60 календарных дней"}], "correct": "А"}, {"id": 14, "question": "На какой срок может быть продлена проверка в исключительных случаях?", "answers": [{"letter": "А", "text": "Не более чем на 30 календарных дней"}, {"letter": "Б", "text": "Не более чем на 5 дней"}, {"letter": "В", "text": "Не более чем на 10 дней"}, {"letter": "Г", "text": "Не более чем на 90 дней"}], "correct": "А"}, {"id": 15, "question": "Какая проверка охватывает одновременно деятельность нескольких субъектов предпринимательства?", "answers": [{"letter": "А", "text": "Плановая"}, {"letter": "Б", "text": "Встречная"}, {"letter": "В", "text": "Рейдовая"}, {"letter": "Г", "text": "Внеплановая"}], "correct": "В"}, {"id": 16, "question": "Какой штраф по ст. 410 КоАП РК предусмотрен за первичное нарушение требований ПБ для физических лиц?", "answers": [{"letter": "А", "text": "10 МРП"}, {"letter": "Б", "text": "15 МРП"}, {"letter": "В", "text": "50 МРП"}, {"letter": "Г", "text": "5 МРП"}], "correct": "Г"}, {"id": 17, "question": "Какой штраф по ст. 410 КоАП РК за первичное нарушение для субъектов крупного предпринимательства?", "answers": [{"letter": "А", "text": "50 МРП"}, {"letter": "Б", "text": "25 МРП"}, {"letter": "В", "text": "30 МРП"}, {"letter": "Г", "text": "100 МРП"}], "correct": "А"}, {"id": 18, "question": "Какой штраф за повторное нарушение (в течение года) для субъектов малого предпринимательства?", "answers": [{"letter": "А", "text": "30 МРП"}, {"letter": "Б", "text": "15 МРП"}, {"letter": "В", "text": "50 МРП"}, {"letter": "Г", "text": "100 МРП"}], "correct": "А"}, {"id": 19, "question": "Какая статья УК РК предусматривает ответственность за нарушение требований пожарной безопасности?", "answers": [{"letter": "А", "text": "Статья 105"}, {"letter": "Б", "text": "Статья 410"}, {"letter": "В", "text": "Статья 292"}, {"letter": "Г", "text": "Статья 16"}], "correct": "В"}, {"id": 20, "question": "Какое наказание предусмотрено за нарушение ПБ, повлекшее по неосторожности смерть двух или более лиц?", "answers": [{"letter": "А", "text": "Только штраф до 100 МРП"}, {"letter": "Б", "text": "Лишение свободы от пяти до десяти лет"}, {"letter": "В", "text": "Предупреждение"}, {"letter": "Г", "text": "Исправительные работы до одного года"}], "correct": "Б"}, {"id": 21, "question": "Какие три фактора составляют «треугольник пожара»?", "answers": [{"letter": "А", "text": "Источник возгорания, горючий материал, кислород"}, {"letter": "Б", "text": "Вода, воздух, огонь"}, {"letter": "В", "text": "Дым, пламя, тепло"}, {"letter": "Г", "text": "Топливо, азот, водород"}], "correct": "А"}, {"id": 22, "question": "Какие вещества относятся к пожарам класса А?", "answers": [{"letter": "А", "text": "Горючие жидкости"}, {"letter": "Б", "text": "Горючие газы"}, {"letter": "В", "text": "Твердые вещества органического происхождения (древесина, бумага, текстиль)"}, {"letter": "Г", "text": "Металлы и их сплавы"}], "correct": "В"}, {"id": 23, "question": "Какие вещества относятся к пожарам класса В?", "answers": [{"letter": "А", "text": "Горючие жидкости и плавящиеся твердые вещества"}, {"letter": "Б", "text": "Древесина и бумага"}, {"letter": "В", "text": "Пропан и бутан"}, {"letter": "Г", "text": "Титан и магний"}], "correct": "А"}, {"id": 24, "question": "Какие вещества относятся к пожарам класса С?", "answers": [{"letter": "А", "text": "Горючие газы (пропан, бутан, природный газ)"}, {"letter": "Б", "text": "Горючие жидкости"}, {"letter": "В", "text": "Твердые вещества"}, {"letter": "Г", "text": "Электроустановки"}], "correct": "А"}, {"id": 25, "question": "Что относится к пожарам класса D?", "answers": [{"letter": "А", "text": "Горение электроустановок"}, {"letter": "Б", "text": "Горение газов"}, {"letter": "В", "text": "Горение жидкостей"}, {"letter": "Г", "text": "Горение металлов и их сплавов (титан, магний, натрий)"}], "correct": "Г"}, {"id": 26, "question": "Что относится к пожарам класса Е?", "answers": [{"letter": "А", "text": "Горение металлов"}, {"letter": "Б", "text": "Горение древесины"}, {"letter": "В", "text": "Горение спиртов"}, {"letter": "Г", "text": "Горение электроустановок"}], "correct": "Г"}, {"id": 27, "question": "Какие помещения относятся к категории А по взрывопожарной опасности?", "answers": [{"letter": "А", "text": "Где находятся негорючие вещества в холодном состоянии"}, {"letter": "Б", "text": "Где обращаются горючие газы и ЛВЖ с температурой вспышки не более 28 °C при избыточном давлении взрыва более 5 кПа"}, {"letter": "В", "text": "Где находятся твердые горючие материалы"}, {"letter": "Г", "text": "Где обращаются негорючие вещества в раскаленном состоянии"}], "correct": "Б"}, {"id": 28, "question": "Какие помещения относятся к категории Б?", "answers": [{"letter": "А", "text": "Склады бензина с температурой вспышки ниже 28 °C"}, {"letter": "Б", "text": "Помещения с негорючими материалами"}, {"letter": "В", "text": "Помещения только с твердыми горючими материалами"}, {"letter": "Г", "text": "Где обращаются горючие пыли или волокна, ЛВЖ с температурой вспышки более 28 °C, образующие взрывоопасные смеси"}], "correct": "Г"}, {"id": 29, "question": "Какие помещения относятся к категориям В1–В4?", "answers": [{"letter": "А", "text": "С негорючими веществами в холодном состоянии"}, {"letter": "Б", "text": "С негорючими веществами в расплавленном состоянии"}, {"letter": "В", "text": "Только склады газовых баллонов"}, {"letter": "Г", "text": "С горючими и трудногорючими жидкостями и твердыми веществами, не относящиеся к категориям А и Б"}], "correct": "Г"}, {"id": 30, "question": "Какие помещения относятся к категории Г?", "answers": [{"letter": "А", "text": "Где хранятся ЛВЖ"}, {"letter": "Б", "text": "Где обращаются негорючие вещества в холодном состоянии"}, {"letter": "В", "text": "Где обращаются негорючие вещества в горячем, раскаленном или расплавленном состоянии с выделением лучистого тепла, искр и пламени"}, {"letter": "Г", "text": "Где хранятся горючие газы под давлением"}], "correct": "В"}, {"id": 31, "question": "Какие помещения относятся к категории Д?", "answers": [{"letter": "А", "text": "Где обращаются ЛВЖ"}, {"letter": "Б", "text": "Где выделяется лучистое тепло и искры"}, {"letter": "В", "text": "Где обращаются негорючие вещества и материалы в холодном состоянии"}, {"letter": "Г", "text": "Где находятся горючие пыли"}], "correct": "В"}, {"id": 32, "question": "При каких параметрах строительные материалы относятся к негорючим?", "answers": [{"letter": "А", "text": "Прирост температуры не более 100 °C, потеря массы не более 20 %"}, {"letter": "Б", "text": "Потеря массы не более 80 %, горение не более 60 с"}, {"letter": "В", "text": "Прирост температуры не более 50 °C, потеря массы не более 50 %, пламенное горение не более 10 с"}, {"letter": "Г", "text": "Прирост температуры не более 200 °C, горение не более 30 с"}], "correct": "В"}, {"id": 33, "question": "Какие материалы относятся к группе Г4 (сильногорючие)?", "answers": [{"letter": "А", "text": "Температура дымовых газов не более 135 °C"}, {"letter": "Б", "text": "Температура дымовых газов более 450 °C"}, {"letter": "В", "text": "Температура дымовых газов не более 235 °C"}, {"letter": "Г", "text": "Температура дымовых газов не более 450 °C"}], "correct": "Б"}, {"id": 34, "question": "Сколько степеней огнестойкости имеют здания и сооружения?", "answers": [{"letter": "А", "text": "Три"}, {"letter": "Б", "text": "Четыре"}, {"letter": "В", "text": "Шесть"}, {"letter": "Г", "text": "Пять (I, II, III, IV, V)"}], "correct": "Г"}, {"id": 35, "question": "Что такое предел огнестойкости?", "answers": [{"letter": "А", "text": "Максимальная высота здания"}, {"letter": "Б", "text": "Время с начала пожара до выхода конструкции из строя (потери несущей способности, целостности, теплоизоляции)"}, {"letter": "В", "text": "Расстояние распространения огня"}, {"letter": "Г", "text": "Время работы пожарной сигнализации"}], "correct": "Б"}, {"id": 36, "question": "На какие группы подразделяются технологические среды по взрывопожарной и пожарной опасности?", "answers": [{"letter": "А", "text": "Только пожароопасные и пожаробезопасные"}, {"letter": "Б", "text": "Горючие и негорючие"}, {"letter": "В", "text": "Безопасные и опасные"}, {"letter": "Г", "text": "Пожаробезопасные, пожароопасные, взрывопожароопасные, взрывоопасные"}], "correct": "Г"}, {"id": 37, "question": "Какие зоны относятся к классу П-I?", "answers": [{"letter": "А", "text": "Помещения с твердыми горючими веществами"}, {"letter": "Б", "text": "Помещения, где обращаются горючие жидкости с температурой вспышки выше 61 °C"}, {"letter": "В", "text": "Зоны вне помещений с твердыми горючими веществами"}, {"letter": "Г", "text": "Помещения с горючими газами"}], "correct": "Б"}, {"id": 38, "question": "Какие зоны относятся к классу П-IIа?", "answers": [{"letter": "А", "text": "Помещения с ЛВЖ"}, {"letter": "Б", "text": "Помещения, в которых обращаются твердые горючие вещества"}, {"letter": "В", "text": "Наружные установки с горючими газами"}, {"letter": "Г", "text": "Помещения с негорючими веществами"}], "correct": "Б"}, {"id": 39, "question": "Что называется температурой вспышки горючей жидкости?", "answers": [{"letter": "А", "text": "Температура, при которой начинается устойчивое горение"}, {"letter": "Б", "text": "Самая низкая температура, при которой над поверхностью образуются пары, дающие вспышку, но не устойчивое горение"}, {"letter": "В", "text": "Наименьшая температура пламенного горения без источника зажигания"}, {"letter": "Г", "text": "Температура кипения жидкости"}], "correct": "Б"}, {"id": 40, "question": "Что называется температурой самовоспламенения?", "answers": [{"letter": "А", "text": "Температура вспышки паров"}, {"letter": "Б", "text": "Температура воспламенения от источника зажигания"}, {"letter": "В", "text": "Наименьшая температура, при которой резкое увеличение скорости экзотермических реакций приводит к пламенному горению"}, {"letter": "Г", "text": "Температура плавления вещества"}], "correct": "В"}, {"id": 41, "question": "Какая жидкость называется ЛВЖ?", "answers": [{"letter": "А", "text": "С температурой вспышки выше 61 °C"}, {"letter": "Б", "text": "С температурой вспышки выше 100 °C"}, {"letter": "В", "text": "С температурой вспышки не выше 61 °C (закрытый тигель) или 66 °C (открытый тигель)"}, {"letter": "Г", "text": "Любая негорючая жидкость"}], "correct": "В"}, {"id": 42, "question": "Какой газ относится к горючему газу (ГГ)?", "answers": [{"letter": "А", "text": "Любой газ в баллоне"}, {"letter": "Б", "text": "Газ, не поддерживающий горения"}, {"letter": "В", "text": "Образующий воспламеняемые и взрывоопасные смеси с воздухом при температурах не выше 55 °C"}, {"letter": "Г", "text": "Газ тяжелее воздуха"}], "correct": "В"}, {"id": 43, "question": "Как подразделяется электрооборудование по взрывопожарной опасности?", "answers": [{"letter": "А", "text": "Низковольтное и высоковольтное"}, {"letter": "Б", "text": "Переносное и стационарное"}, {"letter": "В", "text": "Внутреннее и наружное"}, {"letter": "Г", "text": "Без средств взрывопожарозащиты, пожарозащищенное, взрывозащищенное"}], "correct": "Г"}, {"id": 44, "question": "Какое расстояние должно быть между верхом штабеля и светильниками на складе?", "answers": [{"letter": "А", "text": "Не менее 0,1 метра"}, {"letter": "Б", "text": "Не менее 0,5 метра"}, {"letter": "В", "text": "Не менее 0,2 метра"}, {"letter": "Г", "text": "Не менее 2 метров"}], "correct": "Б"}, {"id": 45, "question": "Какова минимальная ширина проходов против дверей на складе?", "answers": [{"letter": "А", "text": "Не менее 0,5 метра"}, {"letter": "Б", "text": "Равна ширине дверей, но не менее 1 метра"}, {"letter": "В", "text": "Не менее 0,7 метра"}, {"letter": "Г", "text": "Не менее 2 метров"}], "correct": "Б"}, {"id": 46, "question": "Что запрещено устанавливать внутри склада?", "answers": [{"letter": "А", "text": "Штепсельные розетки, временную проводку и электронагревательные приборы"}, {"letter": "Б", "text": "Закрытые светильники"}, {"letter": "В", "text": "Огнетушители"}, {"letter": "Г", "text": "Пожарные извещатели"}], "correct": "А"}, {"id": 47, "question": "Какие емкости категорически запрещены для промышленного хранения ЛВЖ и ГЖ?", "answers": [{"letter": "А", "text": "Металлические"}, {"letter": "Б", "text": "Стальные резервуары"}, {"letter": "В", "text": "Пластиковые"}, {"letter": "Г", "text": "Подземные резервуары"}], "correct": "В"}, {"id": 48, "question": "Для чего предназначен огнепреградитель на резервуаре?", "answers": [{"letter": "А", "text": "Предотвращает попадание искры или пламени внутрь резервуара"}, {"letter": "Б", "text": "Измеряет уровень жидкости"}, {"letter": "В", "text": "Охлаждает жидкость"}, {"letter": "Г", "text": "Увеличивает давление"}], "correct": "А"}, {"id": 49, "question": "Каков максимальный уровень заполнения изотермических резервуаров?", "answers": [{"letter": "А", "text": "Не более 100 %"}, {"letter": "Б", "text": "Не более 83 %"}, {"letter": "В", "text": "Не более 50 %"}, {"letter": "Г", "text": "Не более 95 %"}], "correct": "Г"}, {"id": 50, "question": "Какой максимальный уровень заполнения резервуаров под давлением?", "answers": [{"letter": "А", "text": "Не более 83 %"}, {"letter": "Б", "text": "Не более 95 %"}, {"letter": "В", "text": "Не более 100 %"}, {"letter": "Г", "text": "Не более 60 %"}], "correct": "А"}, {"id": 51, "question": "Что должно быть у каждой группы наземных резервуаров?", "answers": [{"letter": "А", "text": "Деревянное ограждение"}, {"letter": "Б", "text": "Пластиковый барьер"}, {"letter": "В", "text": "Ничего не требуется"}, {"letter": "Г", "text": "Сплошное земляное обвалование или ограждающая стена из негорючих материалов"}], "correct": "Г"}, {"id": 52, "question": "Для стоянки какого количества автомобилей требуется план расстановки с очередностью эвакуации при пожаре?", "answers": [{"letter": "А", "text": "Более 5 автомобилей"}, {"letter": "Б", "text": "Более 10 автомобилей"}, {"letter": "В", "text": "Более 25 автомобилей"}, {"letter": "Г", "text": "Более 100 автомобилей"}], "correct": "В"}, {"id": 53, "question": "Как должны открываться ворота для выезда техники?", "answers": [{"letter": "А", "text": "Наружу"}, {"letter": "Б", "text": "Внутрь"}, {"letter": "В", "text": "Только вверх"}, {"letter": "Г", "text": "Только вручную внутрь"}], "correct": "А"}, {"id": 54, "question": "Что запрещено в закрытых боксах?", "answers": [{"letter": "А", "text": "Стоянка одного автомобиля"}, {"letter": "Б", "text": "Совместная стоянка бензовозов и автомобилей"}, {"letter": "В", "text": "Вентиляция"}, {"letter": "Г", "text": "Освещение"}], "correct": "Б"}, {"id": 55, "question": "Что запрещено использовать для подогрева двигателей?", "answers": [{"letter": "А", "text": "Горячую воду"}, {"letter": "Б", "text": "Паровой подогрев"}, {"letter": "В", "text": "Теплый воздух от штатных подогревателей"}, {"letter": "Г", "text": "Открытый огонь (костры, факелы, паяльные лампы)"}], "correct": "Г"}, {"id": 56, "question": "Что запрещено при эксплуатации электросетей?", "answers": [{"letter": "А", "text": "Самодельные плавкие вставки («жучки»)"}, {"letter": "Б", "text": "Заводские автоматические выключатели"}, {"letter": "В", "text": "Пайка жил"}, {"letter": "Г", "text": "Опрессовка жил"}], "correct": "А"}, {"id": 57, "question": "Какие способы соединения жил проводов допускаются?", "answers": [{"letter": "А", "text": "Обычная скрутка"}, {"letter": "Б", "text": "Скрутка меди с алюминием"}, {"letter": "В", "text": "Пайка, сварка, опрессовка или винтовые клеммные зажимы"}, {"letter": "Г", "text": "Обмотка изолентой без соединения"}], "correct": "В"}, {"id": 58, "question": "Какие электросети допускается оставлять под напряжением по окончании рабочего времени?", "answers": [{"letter": "А", "text": "Все электросети"}, {"letter": "Б", "text": "Электронагревательные приборы"}, {"letter": "В", "text": "Удлинители с компьютерами"}, {"letter": "Г", "text": "Пожарная сигнализация, видеонаблюдение и дежурное освещение"}], "correct": "Г"}, {"id": 59, "question": "На каком минимальном расстоянии от зданий допускается разведение костров и сжигание отходов?", "answers": [{"letter": "А", "text": "Не ближе 5 м"}, {"letter": "Б", "text": "Не ближе 10 м"}, {"letter": "В", "text": "Не ближе 20 м"}, {"letter": "Г", "text": "Не ближе 50 м"}], "correct": "Г"}, {"id": 60, "question": "Что оформляется на проведение огневых работ на временных местах?", "answers": [{"letter": "А", "text": "Устное разрешение"}, {"letter": "Б", "text": "Наряд-допуск"}, {"letter": "В", "text": "Акт списания"}, {"letter": "Г", "text": "Приказ о премировании"}], "correct": "Б"}, {"id": 61, "question": "В какое время проводятся огневые работы на взрывоопасных объектах (кроме аварийных случаев)?", "answers": [{"letter": "А", "text": "Только в дневное время"}, {"letter": "Б", "text": "Только в ночное время"}, {"letter": "В", "text": "В любое время"}, {"letter": "Г", "text": "Только в выходные дни"}], "correct": "А"}, {"id": 62, "question": "Хранение в таре нефтепродуктов с какой температурой вспышки не допускается на открытых площадках?", "answers": [{"letter": "А", "text": "100 °C и выше"}, {"letter": "Б", "text": "61 °C и выше"}, {"letter": "В", "text": "Любых нефтепродуктов допускается"}, {"letter": "Г", "text": "45 °C и ниже"}], "correct": "Г"}, {"id": 63, "question": "Каким должен быть склад для хранения баллонов с горючими газами?", "answers": [{"letter": "А", "text": "Многоэтажным"}, {"letter": "Б", "text": "С чердаком"}, {"letter": "В", "text": "Одноэтажным с легкосбрасываемыми покрытиями и без чердачных помещений"}, {"letter": "Г", "text": "Подвальным без вентиляции"}], "correct": "В"}, {"id": 64, "question": "Чем должны быть закрашены окна помещений, где хранятся баллоны с газами?", "answers": [{"letter": "А", "text": "Белой краской"}, {"letter": "Б", "text": "Черной краской"}, {"letter": "В", "text": "Красной краской"}, {"letter": "Г", "text": "Окна не закрашиваются"}], "correct": "А"}, {"id": 65, "question": "Что такое эвакуационный выход?", "answers": [{"letter": "А", "text": "Выход, ведущий в безопасную при пожаре зону"}, {"letter": "Б", "text": "Любая дверь в здании"}, {"letter": "В", "text": "Выход только на крышу"}, {"letter": "Г", "text": "Выход только в подвал"}], "correct": "А"}, {"id": 66, "question": "Что верно в отношении аварийных выходов?", "answers": [{"letter": "А", "text": "Являются основными эвакуационными"}, {"letter": "Б", "text": "Заменяют эвакуационные выходы"}, {"letter": "В", "text": "Не учитываются при эвакуации в случае пожара"}, {"letter": "Г", "text": "Учитываются в расчете эвакуации в первую очередь"}], "correct": "В"}, {"id": 67, "question": "Что запрещено на путях эвакуации?", "answers": [{"letter": "А", "text": "Устанавливать указатели выхода"}, {"letter": "Б", "text": "Размещать планы эвакуации"}, {"letter": "В", "text": "Загромождать их материалами и оборудованием"}, {"letter": "Г", "text": "Освещать аварийным светом"}], "correct": "В"}, {"id": 68, "question": "Когда разрабатывается и вывешивается план эвакуации на этаже?", "answers": [{"letter": "А", "text": "Когда на этаже одновременно находятся не менее 10 человек"}, {"letter": "Б", "text": "Когда на этаже находится 1 человек"}, {"letter": "В", "text": "Когда на этаже более 100 человек"}, {"letter": "Г", "text": "Только в многоэтажных зданиях"}], "correct": "А"}, {"id": 69, "question": "Какой буквенный индекс наносится на указатель пожарного гидранта?", "answers": [{"letter": "А", "text": "«ПВ»"}, {"letter": "Б", "text": "«ПК»"}, {"letter": "В", "text": "«ПГ»"}, {"letter": "Г", "text": "«ПЩ»"}], "correct": "В"}, {"id": 70, "question": "На какой высоте устанавливаются пожарные краны внутреннего противопожарного водопровода?", "answers": [{"letter": "А", "text": "1,35 м"}, {"letter": "Б", "text": "0,5 м"}, {"letter": "В", "text": "2,5 м"}, {"letter": "Г", "text": "3 м"}], "correct": "А"}, {"id": 71, "question": "С какой периодичностью проводится ревизия пожарных кранов?", "answers": [{"letter": "А", "text": "Раз в месяц"}, {"letter": "Б", "text": "Раз в 3 года"}, {"letter": "В", "text": "Не реже одного раза в 6 месяцев"}, {"letter": "Г", "text": "Раз в 5 лет"}], "correct": "В"}, {"id": 72, "question": "Какова предельная защищаемая площадь одним пожарным щитом для помещений категорий А, Б и В (горючие газы и жидкости)?", "answers": [{"letter": "А", "text": "400 м²"}, {"letter": "Б", "text": "1000 м²"}, {"letter": "В", "text": "200 м²"}, {"letter": "Г", "text": "1800 м²"}], "correct": "В"}, {"id": 73, "question": "Для какого класса пожара нельзя использовать водяные огнетушители?", "answers": [{"letter": "А", "text": "Древесина"}, {"letter": "Б", "text": "Электрооборудование под напряжением и горящее масло"}, {"letter": "В", "text": "Бумага"}, {"letter": "Г", "text": "Текстиль"}], "correct": "Б"}, {"id": 74, "question": "Каким огнетушителем можно тушить пожары классов А, В, С и электрооборудование?", "answers": [{"letter": "А", "text": "Водяным"}, {"letter": "Б", "text": "Пенным"}, {"letter": "В", "text": "Не существует такого"}, {"letter": "Г", "text": "Порошковым"}], "correct": "Г"}, {"id": 75, "question": "Какой огнетушитель лучше применять для пожаров класса В и электрооборудования?", "answers": [{"letter": "А", "text": "Углекислотный (CO2)"}, {"letter": "Б", "text": "Водяной"}, {"letter": "В", "text": "Пенный"}, {"letter": "Г", "text": "Любой не подходит"}], "correct": "А"}, {"id": 76, "question": "Какая система отвечает за обнаружение возгорания, оповещение людей и передачу сигнала на пульт?", "answers": [{"letter": "А", "text": "АУПТ"}, {"letter": "Б", "text": "АПС (автоматическая пожарная сигнализация)"}, {"letter": "В", "text": "Система дымоудаления"}, {"letter": "Г", "text": "Пожарный гидрант"}], "correct": "Б"}, {"id": 77, "question": "По какому единому номеру можно вызвать подразделения противопожарной службы?", "answers": [{"letter": "А", "text": "102 и 103"}, {"letter": "Б", "text": "101 и 112"}, {"letter": "В", "text": "104"}, {"letter": "Г", "text": "105 и 106"}], "correct": "Б"}, {"id": 78, "question": "Кто руководит тушением пожара?", "answers": [{"letter": "А", "text": "Прибывший на пожар старшее должностное лицо гарнизона противопожарной службы"}, {"letter": "Б", "text": "Директор организации"}, {"letter": "В", "text": "Охранник объекта"}, {"letter": "Г", "text": "Любой работник"}], "correct": "А"}, {"id": 79, "question": "С какой стороны от пламени следует стоять при тушении пожара?", "answers": [{"letter": "А", "text": "С наветренной стороны"}, {"letter": "Б", "text": "С подветренной стороны"}, {"letter": "В", "text": "Со стороны дыма"}, {"letter": "Г", "text": "Со стороны выхода из здания"}], "correct": "А"}, {"id": 80, "question": "Куда необходимо направлять струю огнетушителя?", "answers": [{"letter": "А", "text": "В середину пламени"}, {"letter": "Б", "text": "На верхнюю часть пламени"}, {"letter": "В", "text": "На дым"}, {"letter": "Г", "text": "На основание пламени"}], "correct": "Г"}];
+ALL_QUESTIONS.forEach((q,i)=>{q.__idx=i});
+const LS_KEY='ptm_test_results_v1';
+const TEACHER_PASSWORD='prepod2026';
+let shuffledQuestions=[],userAnswers=[],currentIndex=0,userFIO='';
+let currentLang='ru';
+
+const LANG={
+  ru:{
+    title:'Пожарно-технический минимум',
+    subtitle:'80 вопросов | Проходной балл: 70%',
+    fioLabel:'Введите вашу Фамилию, Имя и Отчество',
+    fioPlaceholder:'Иванов Иван Иванович',
+    startBtn:'Начать тестирование',
+    journalBtn:'Журнал результатов (для преподавателя)',
+    confirmBtn:'Подтвердить ответ',
+    nextBtn:'Далее \u2192',
+    finishBtn:'Завершить',
+    questionCounter:(i,n)=>'Вопрос '+i+' из '+n,
+    resultsTitle:'Результаты тестирования',
+    scoreLabel:'баллов',
+    passed:'Тест пройден!',
+    failed:'Тест не пройден',
+    resultDetail:(c,t,p)=>'Правильных ответов: '+c+' из '+t+' ('+p+'%). Проходной балл: 70%.',
+    infoBox:'<strong>Результат автоматически сохранён.</strong><br>Файл CSV скачан в папку «Загрузки». Переместите его в папку с тестом.<br>Преподаватель может открыть «Журнал результатов» для просмотра всех прохождений.',
+    restartBtn:'Пройти заново',
+    journalBtn2:'Журнал результатов',
+    journalTitle:'Журнал результатов',
+    journalSubtitle:'Доступ только для преподавателя',
+    passwordLabel:'Введите пароль',
+    passwordPlaceholder:'Пароль',
+    loginBtn:'Войти',
+    backBtn:'\u2190 Назад',
+    wrongPassword:'Неверный пароль',
+    journalTitle2:'Журнал результатов',
+    journalSubtitle2:'Все прохождения теста сохранены в браузере',
+    downloadAllBtn:'Скачать все результаты (CSV)',
+    homeBtn:'На главную',
+    noResults:'Пока нет сохранённых результатов.',
+    thDate:'Дата',thFio:'ФИО',thScore:'Баллы',thPercent:'%',thStatus:'Статус',
+    statusPassed:'Пройден',statusFailed:'Не пройден',
+    fioAlert:'Пожалуйста, введите ФИО',
+    noSavedResults:'Нет сохранённых результатов'
+  },
+};
+
+function applyLang(){
+  const t=LANG[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.dataset.i18n;
+    if(typeof t[key]==='string')el.innerHTML=t[key];
+  });
+  document.getElementById('fio').placeholder=t.fioPlaceholder;
+  document.getElementById('password').placeholder=t.passwordPlaceholder;
+  if(document.getElementById('screen-test').classList.contains('active')&&shuffledQuestions.length){
+    renderQuestion();
+  }
+}
+
+function shuffleArray(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('password-error').textContent='';document.getElementById('password').value=''}
+
+function startTest(){
+  const fio=document.getElementById('fio').value.trim();
+  if(!fio){alert(LANG[currentLang].fioAlert);return}
+  userFIO=fio;
+  shuffledQuestions=shuffleArray(ALL_QUESTIONS);
+  userAnswers=new Array(shuffledQuestions.length).fill(null);
+  currentIndex=0;
+  showScreen('screen-test');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const qRu=shuffledQuestions[currentIndex];
+  const q=qRu;
+  const t=LANG[currentLang];
+  document.getElementById('question-counter').textContent=t.questionCounter(currentIndex+1,shuffledQuestions.length);
+  document.getElementById('question-text').textContent=q.question;
+  document.getElementById('progress-fill').style.width=((currentIndex)/shuffledQuestions.length*100)+'%';
+  const answersDiv=document.getElementById('answers');
+  answersDiv.innerHTML='';
+  q.answers.forEach((ans)=>{
+    const btn=document.createElement('button');
+    btn.className='answer-option';
+    btn.dataset.letter=ans.letter;
+    btn.innerHTML='<span class="answer-letter">'+ans.letter+'</span><span>'+escapeHtml(ans.text)+'</span>';
+    btn.onclick=()=>selectAnswer(ans.letter);
+    answersDiv.appendChild(btn);
+  });
+  document.getElementById('btn-confirm').disabled=true;
+  document.getElementById('btn-confirm').style.display='';
+  document.getElementById('btn-confirm').textContent=t.confirmBtn;
+  document.getElementById('btn-next').disabled=true;
+  document.getElementById('btn-next').style.display='none';
+  document.getElementById('btn-next').textContent=currentIndex===shuffledQuestions.length-1?t.finishBtn:t.nextBtn;
+}
+
+function escapeHtml(text){const div=document.createElement('div');div.textContent=text;return div.innerHTML}
+
+function selectAnswer(letter){
+  userAnswers[currentIndex]=letter;
+  const buttons=document.querySelectorAll('.answer-option');
+  buttons.forEach(btn=>{
+    btn.classList.toggle('selected', btn.dataset.letter===letter);
+  });
+  document.getElementById('btn-confirm').disabled=false;
+}
+
+function confirmAnswer(){
+  const letter=userAnswers[currentIndex];
+  if(!letter)return;
+  const q=shuffledQuestions[currentIndex];
+  const correctLetter=q.correct;
+  const buttons=document.querySelectorAll('.answer-option');
+  buttons.forEach(btn=>{
+    btn.onclick=null;
+    btn.classList.add('disabled');
+    const btnLetter=btn.dataset.letter;
+    if(btnLetter===letter && btnLetter===correctLetter){
+      btn.classList.add('correct');
+    }else if(btnLetter===letter && btnLetter!==correctLetter){
+      btn.classList.add('wrong');
+    }else if(btnLetter===correctLetter){
+      btn.classList.add('correct');
+    }
+  });
+  document.getElementById('btn-confirm').style.display='none';
+  document.getElementById('btn-next').style.display='';
+  document.getElementById('btn-next').disabled=false;
+}
+
+function nextQuestion(){
+  if(currentIndex<shuffledQuestions.length-1){currentIndex++;renderQuestion()}
+  else{finishTest()}
+}
+
+function finishTest(){
+  let correctCount=0;
+  for(let i=0;i<shuffledQuestions.length;i++){if(userAnswers[i]===shuffledQuestions[i].correct)correctCount++}
+  const percent=Math.round((correctCount/shuffledQuestions.length)*100);
+  const passed=percent>=70;
+  const resultObj={date:new Date().toLocaleString('ru-RU'),fio:userFIO,score:correctCount,total:shuffledQuestions.length,percent:percent,passed:passed};
+  const results=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
+  results.push(resultObj);
+  localStorage.setItem(LS_KEY,JSON.stringify(results));
+  downloadSingleResult(resultObj);
+  const circle=document.getElementById('score-circle');
+  circle.className='score-circle '+(passed?'pass':'fail');
+  document.getElementById('score-number').textContent=correctCount;
+  const t=LANG[currentLang];
+  document.getElementById('result-status').textContent=passed?t.passed:t.failed;
+  document.getElementById('result-status').className='result-status '+(passed?'pass':'fail');
+  document.getElementById('result-detail').textContent=t.resultDetail(correctCount,shuffledQuestions.length,percent);
+  showScreen('screen-results');
+}
+
+function downloadSingleResult(result){
+  const status=result.passed?"Пройден":"Не пройден";
+  const csv='\uFEFFДата;ФИО;Правильно;Всего;Процент;Статус\n'+result.date+';"'+result.fio+'";'+result.score+';'+result.total+';'+result.percent+'%;'+status+'\n';
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  const safeFio=result.fio.replace(/[^\p{L}\p{N}\s\-]/gu,'').replace(/\s+/g,'_');
+  a.download='ptm_result_'+safeFio+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function downloadResults(){
+  const results=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
+  if(results.length===0){alert(LANG[currentLang].noSavedResults);return}
+  let csv='\uFEFFДата;ФИО;Правильно;Всего;Процент;Статус\n';
+  results.forEach(r=>{const status=r.passed?"Пройден":"Не пройден";csv+=r.date+';"'+r.fio+'";'+r.score+';'+r.total+';'+r.percent+'%;'+status+'\n'});
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='ptm_all_results.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function restartTest(){document.getElementById('fio').value=userFIO;showScreen('screen-login')}
+function goToLogin(){showScreen('screen-login')}
+function showPasswordPrompt(){showScreen('screen-password')}
+
+function checkPassword(){
+  const pwd=document.getElementById('password').value;
+  if(pwd===TEACHER_PASSWORD){showAllResults()}
+  else{document.getElementById('password-error').textContent=LANG[currentLang].wrongPassword}
+}
+
+function showAllResults(){
+  const results=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
+  const container=document.getElementById('history-content');
+  const t=LANG[currentLang];
+  if(results.length===0){container.innerHTML='<p style="text-align:center;color:#a0aec0;margin-top:20px">'+t.noResults+'</p>'}
+  else{
+    let html='<table class="history-table"><thead><tr><th>'+t.thDate+'</th><th>'+t.thFio+'</th><th>'+t.thScore+'</th><th>'+t.thPercent+'</th><th>'+t.thStatus+'</th></tr></thead><tbody>';
+    results.slice().reverse().forEach(r=>{
+      const badge=r.passed?'<span class="badge badge-pass">'+t.statusPassed+'</span>':'<span class="badge badge-fail">'+t.statusFailed+'</span>';
+      html+='<tr><td>'+r.date+'</td><td>'+escapeHtml(r.fio)+'</td><td>'+r.score+'/'+r.total+'</td><td>'+r.percent+'%</td><td>'+badge+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    container.innerHTML=html;
+  }
+  showScreen('screen-history');
+}
+
+document.getElementById('fio').addEventListener('keypress',function(e){if(e.key==='Enter')startTest()});
+document.getElementById('password').addEventListener('keypress',function(e){if(e.key==='Enter')checkPassword()});
+applyLang();
+</script>
+</body>
+</html>
